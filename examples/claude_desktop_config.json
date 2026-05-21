@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "damask": {
+      "command": "conda",
+      "args": [
+        "run",
+        "--no-capture-output",
+        "-n",
+        "damaskcp",
+        "fastmcp",
+        "run",
+        "fastmcp.json",
+        "--skip-env"
+      ],
+      "cwd": "/ABSOLUTE/PATH/TO/DAMASK-MCP",
+      "env": {
+        "PYTHONPATH": "/ABSOLUTE/PATH/TO/DAMASK-MCP/src",
+        "FASTMCP_LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}

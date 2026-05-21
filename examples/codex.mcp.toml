@@ -1,0 +1,19 @@
+[mcp_servers.damask]
+command = "conda"
+args = [
+  "run",
+  "--no-capture-output",
+  "-n",
+  "damaskcp",
+  "fastmcp",
+  "run",
+  "fastmcp.json",
+  "--skip-env"
+]
+cwd = "/ABSOLUTE/PATH/TO/DAMASK-MCP"
+startup_timeout_sec = 30
+tool_timeout_sec = 3600
+
+[mcp_servers.damask.env]
+PYTHONPATH = "/ABSOLUTE/PATH/TO/DAMASK-MCP/src"
+FASTMCP_LOG_LEVEL = "INFO"

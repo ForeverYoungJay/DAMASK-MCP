@@ -4,6 +4,19 @@ Standalone FastMCP adapters and servers for DAMASK workflows.
 
 This repository is the MCP-only extraction from DAMASK Copilot. It contains the DAMASK adapter layer, FastMCP server entrypoints, and validation utilities needed to expose DAMASK preprocessing, simulation validation, execution, and post-processing tools to MCP clients.
 
+## Portable FastMCP Config
+
+This repository includes a root-level [fastmcp.json](./fastmcp.json) and a stable top-level entrypoint [server.py](./server.py).
+
+Use them like this:
+
+```bash
+fastmcp inspect fastmcp.json
+fastmcp run fastmcp.json --skip-env
+```
+
+`--skip-env` is appropriate when you already have a ready environment such as `conda activate damaskcp`.
+
 ## Architecture
 
 The project intentionally does not expose every DAMASK symbol as an MCP tool. Instead it wraps the main workflows:
@@ -168,6 +181,12 @@ Or via the console script:
 damask-mcp
 ```
 
+Or via FastMCP config:
+
+```bash
+fastmcp run fastmcp.json --skip-env
+```
+
 Split servers remain available when you want finer-grained registration:
 
 Core:
@@ -206,89 +225,44 @@ Misc:
 python3 -m damask_copilot.mcp_servers.damask_misc_server
 ```
 
-## Codex MCP Configuration
+## Client Config Examples
 
-Example `.codex/config.toml`:
+Example client configs are included here:
 
-```toml
-[mcp_servers.damask]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 3600
+- [examples/codex.mcp.toml](./examples/codex.mcp.toml)
+- [examples/claude_desktop_config.json](./examples/claude_desktop_config.json)
 
-[mcp_servers.damask.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-
-[mcp_servers.damask-core]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_core_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 60
-
-[mcp_servers.damask-core.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-
-[mcp_servers.damask-preprocess]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_preprocess_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 120
-
-[mcp_servers.damask-preprocess.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-
-[mcp_servers.damask-validation]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_validation_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 120
-
-[mcp_servers.damask-validation.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-
-[mcp_servers.damask-runner]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_runner_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 3600
-
-[mcp_servers.damask-runner.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-
-[mcp_servers.damask-postprocess]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_postprocess_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 300
-
-[mcp_servers.damask-postprocess.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-
-[mcp_servers.damask-misc]
-command = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/.venv/bin/python"
-args = ["-m", "damask_copilot.mcp_servers.damask_misc_server"]
-cwd = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT"
-startup_timeout_sec = 30
-tool_timeout_sec = 120
-
-[mcp_servers.damask-misc.env]
-PYTHONPATH = "/Users/yang/Library/CloudStorage/OneDrive-国立研究開発法人物質・材料研究機構/自分/DAMASK COPILOT/src"
-```
-
-If you prefer to use a different Python interpreter, update `command` and keep `PYTHONPATH` pointed at `src`.
+Update the placeholder absolute paths before using them.
 
 ## Verification Commands
 
 Once dependencies are installed, run:
 
 ```bash
+conda run -n damaskcp fastmcp inspect fastmcp.json
 python -c "import damask; print(damask.__version__)"
 python -m pytest tests
 ```
+
+## Client Config Examples
+
+Example client configs are included here:
+
+- [examples/codex.mcp.toml](./examples/codex.mcp.toml)
+- [examples/claude_desktop_config.json](./examples/claude_desktop_config.json)
+
+Update the placeholder absolute paths before using them.
+
+## Horizon Deploy
+
+If you want to publish this MCP over HTTP, use the included minimal Horizon deployment checklist.
+
+This repo’s recommended hosted entrypoint is:
+
+```text
+server.py:mcp
+```
+
+Minimal deployment checklist:
+
+- [docs/horizon_minimal_deploy.md](./docs/horizon_minimal_deploy.md)
