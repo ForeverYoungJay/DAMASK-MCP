@@ -73,7 +73,16 @@ fastmcp run fastmcp.json --skip-env
 
 The root-level `fastmcp.json` uses `streamable-http` on `127.0.0.1:8081/mcp`, matching hosted FastMCP proxy runners that wait for a local HTTP MCP endpoint.
 
-For hosted runtimes with a read-only application directory, set `DAMASK_MCP_WORKSPACES` to a writable directory. If it is not set and repository-local `workspaces/` cannot be created, DAMASK MCP falls back to `/tmp/damask-mcp-workspaces`.
+By default, generated inputs and outputs are written under the repository-local `workspaces/` directory. For hosted runtimes with a read-only application directory, set `DAMASK_MCP_WORKSPACES` to a writable local or mounted directory. Use an explicit workspace directory when you need both the MCP process and a local shell/container to see the same generated inputs.
+
+Runner tools require a `DAMASK_grid` executable in the MCP runtime, not only the `damask` Python package. Put `DAMASK_grid` on `PATH` or set `DAMASK_GRID_EXECUTABLE` to its absolute path. The `find_damask_executables` tool reports every probe it tried, the selected executable, environment hints, and setup guidance; ask users to run it first when solver execution is unavailable.
+
+Recommended runtime environment:
+
+```bash
+export DAMASK_MCP_WORKSPACES=/absolute/path/to/DAMASK-MCP/workspaces
+export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
+```
 
 ## Client Config Examples
 
@@ -82,7 +91,7 @@ Example client configs are included here:
 - [examples/codex.mcp.toml](./examples/codex.mcp.toml)
 - [examples/claude_desktop_config.json](./examples/claude_desktop_config.json)
 
-Update the placeholder absolute paths before using them. The examples set `PYTHONPATH` to this repository's `src/` directory to avoid accidentally loading another editable install.
+Update the placeholder absolute paths before using them. The examples set `PYTHONPATH` to this repository's `src/` directory to avoid accidentally loading another editable install. They also show `DAMASK_MCP_WORKSPACES` and `DAMASK_GRID_EXECUTABLE`, which are the two important settings for reproducible solver runs.
 
 ## Verification
 
@@ -244,6 +253,14 @@ If you want to publish this MCP over HTTP, use the included minimal Horizon depl
 - [docs/horizon_minimal_deploy.md](./docs/horizon_minimal_deploy.md)
 
 Confirm whether the hosted runtime has a working `damask` Python package and a `DAMASK_grid` executable before enabling runner workflows.
+
+For hosted deployments, the most reliable configuration is an absolute solver path:
+
+```bash
+export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
+```
+
+The diagnostic tool checks `DAMASK_GRID_EXECUTABLE`, `PATH`, the active Python environment `bin/` directory, `CONDA_PREFIX/bin`, and common local DAMASK source-build paths.
 
 ## License
 

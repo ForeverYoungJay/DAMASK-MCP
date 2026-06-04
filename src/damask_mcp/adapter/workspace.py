@@ -5,7 +5,6 @@ from __future__ import annotations
 import importlib
 import os
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -18,18 +17,17 @@ def project_root() -> Path:
 def workspaces_root() -> Path:
     """Return the workspace root and create it if needed."""
     configured = os.environ.get("DAMASK_MCP_WORKSPACES")
-    candidates = [Path(configured).expanduser()] if configured else []
-    candidates.extend([project_root() / "workspaces", Path(tempfile.gettempdir()) / "damask-mcp-workspaces"])
+    root = Path(configured).expanduser() if configured else project_root() / "workspaces"
 
-    errors: list[str] = []
-    for root in candidates:
-        try:
-            root.mkdir(parents=True, exist_ok=True)
-            return root
-        except OSError as exc:
-            errors.append(f"{root}: {exc}")
-
-    raise RuntimeError("Could not create a DAMASK MCP workspace root. Tried: " + "; ".join(errors))
+    try:
+        root.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        configured_hint = "the configured DAMASK_MCP_WORKSPACES" if configured else "the local project workspaces directory"
+        raise RuntimeError(
+            f"Could not create {configured_hint}: {root}. "
+            "Set DAMASK_MCP_WORKSPACES to a writable local directory shared with the MCP runtime."
+        ) from exc
+    return root
 
 
 def damask_python_root() -> Path:

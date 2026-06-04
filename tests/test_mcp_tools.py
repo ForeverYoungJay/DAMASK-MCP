@@ -36,3 +36,32 @@ def test_unified_server_lists_registered_tools_with_fastmcp():
     assert damask_server.mcp.name == "damask"
     assert len(tools) == 69
     assert {tool.name for tool in tools} >= {"describe_damask_mcp", "create_load_yaml_from_template"}
+
+
+def test_runner_server_forwards_run_damask_grid_keyword_arguments(monkeypatch):
+    captured = {}
+
+    def fake_run_damask_grid_impl(**kwargs):
+        captured.update(kwargs)
+        return {"ok": True}
+
+    monkeypatch.setattr(damask_runner_server, "run_damask_grid_impl", fake_run_damask_grid_impl)
+
+    result = damask_runner_server.run_damask_grid(
+        workspace="demo",
+        geometry="geometry.vti",
+        load="load.yaml",
+        material="material.yaml",
+        numerics="numerics.yaml",
+        timeout_seconds=123,
+    )
+
+    assert result == {"ok": True}
+    assert captured == {
+        "workspace": "demo",
+        "geometry": "geometry.vti",
+        "load": "load.yaml",
+        "material": "material.yaml",
+        "numerics": "numerics.yaml",
+        "timeout_seconds": 123,
+    }

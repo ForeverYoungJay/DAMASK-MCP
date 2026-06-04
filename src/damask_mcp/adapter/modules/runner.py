@@ -16,27 +16,49 @@ RESULT_SUFFIXES = {".hdf5", ".h5", ".vti", ".vtu", ".vtp", ".xdmf", ".csv"}
 INPUT_FILENAMES = {"geometry.vti", "load.yaml", "material.yaml", "numerics.yaml"}
 
 
-def _candidate_executables() -> list[Path]:
+def _executable_probe() -> tuple[list[Path], list[dict[str, Any]]]:
+    probes: list[dict[str, Any]] = []
     candidates: list[Path] = []
-    located = shutil.which("DAMASK_grid")
-    if located:
-        candidates.append(Path(located))
-    python_bin = Path(sys.executable).resolve().parent / "DAMASK_grid"
-    if python_bin.exists():
-        candidates.append(python_bin)
+
+    def add_probe(source: str, path: str | Path | None, hint: str | None = None) -> None:
+        if path is None:
+            probes.append({"source": source, "path": None, "exists": False, "hint": hint})
+            return
+        candidate = Path(path).expanduser()
+        exists = candidate.exists()
+        executable = exists and os.access(candidate, os.X_OK)
+        probes.append(
+            {
+                "source": source,
+                "path": str(candidate),
+                "exists": exists,
+                "executable": executable,
+                "hint": hint,
+            }
+        )
+        if executable:
+            candidates.append(candidate)
+
+    configured = os.environ.get("DAMASK_GRID_EXECUTABLE")
+    add_probe(
+        "DAMASK_GRID_EXECUTABLE",
+        configured,
+        "Set this environment variable to the absolute DAMASK_grid path when it is not on PATH.",
+    )
+
+    add_probe("PATH", shutil.which("DAMASK_grid"), "Resolved with shutil.which('DAMASK_grid').")
+    add_probe("python_env_bin", Path(sys.executable).resolve().parent / "DAMASK_grid")
+
     conda_prefix = os.environ.get("CONDA_PREFIX")
-    if conda_prefix:
-        conda_bin = Path(conda_prefix) / "bin" / "DAMASK_grid"
-        if conda_bin.exists():
-            candidates.append(conda_bin)
-    local_candidates = [
+    add_probe("CONDA_PREFIX/bin", Path(conda_prefix) / "bin" / "DAMASK_grid" if conda_prefix else None)
+
+    for candidate in [
         project_root() / "damask-3.0.2" / "bin" / "DAMASK_grid",
         project_root() / "damask-3.0.2" / "build" / "DAMASK_grid",
         project_root() / "damask-3.0.2" / "src" / "grid" / "DAMASK_grid",
-    ]
-    for candidate in local_candidates:
-        if candidate.exists():
-            candidates.append(candidate)
+    ]:
+        add_probe("local_damask_source", candidate)
+
     unique: list[Path] = []
     seen: set[str] = set()
     for path in candidates:
@@ -44,16 +66,34 @@ def _candidate_executables() -> list[Path]:
         if resolved not in seen:
             unique.append(path.resolve())
             seen.add(resolved)
-    return unique
+    return unique, probes
+
+
+def _candidate_executables() -> list[Path]:
+    candidates, _ = _executable_probe()
+    return candidates
 
 
 def find_damask_executables() -> dict[str, Any]:
     """Find DAMASK_grid executables on PATH and in common local build locations."""
-    candidates = _candidate_executables()
+    candidates, probes = _executable_probe()
+    guidance = [
+        "DAMASK_grid is the solver executable; the damask Python package alone may not provide it.",
+        "If DAMASK_grid is installed but not discoverable, set DAMASK_GRID_EXECUTABLE to its absolute path.",
+        "Common locations are a Conda environment bin directory, ~/.local/bin, or a local DAMASK build directory.",
+    ]
     return {
         "ok": True,
         "count": len(candidates),
         "executables": [str(path) for path in candidates],
+        "selected": str(candidates[0]) if candidates else None,
+        "probes": probes,
+        "environment": {
+            "python_executable": sys.executable,
+            "conda_prefix": os.environ.get("CONDA_PREFIX"),
+            "path_preview": os.environ.get("PATH", "").split(os.pathsep)[:12],
+        },
+        "guidance": guidance,
     }
 
 
@@ -108,7 +148,11 @@ def run_damask_grid(
             return {
                 "ok": False,
                 "workspace": workspace,
-                "error": "DAMASK_grid executable not found. Build or install DAMASK_grid first.",
+                "error": (
+                    "DAMASK_grid executable not found in this MCP runtime. "
+                    "Install/build DAMASK_grid, add it to PATH, or set DAMASK_GRID_EXECUTABLE "
+                    "to its absolute path. The damask Python package alone may not include the solver binary."
+                ),
             }
         workspace_dir = ensure_existing_directory(resolve_workspace_dir(workspace))
         geometry_path = ensure_path_within_workspaces(workspace_dir / geometry)

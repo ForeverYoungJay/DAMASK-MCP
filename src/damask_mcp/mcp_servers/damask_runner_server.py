@@ -28,10 +28,18 @@ def run_damask_grid(
     geometry: str,
     load: str,
     material: str,
+    numerics: str | None = None,
     timeout_seconds: int = 3600,
 ) -> dict[str, Any]:
     """Run DAMASK_grid with workspace-local input files using a safe subprocess call."""
-    return run_damask_grid_impl(workspace, geometry, load, material, timeout_seconds)
+    return run_damask_grid_impl(
+        workspace=workspace,
+        geometry=geometry,
+        load=load,
+        material=material,
+        numerics=numerics,
+        timeout_seconds=timeout_seconds,
+    )
 
 
 @mcp.tool()

@@ -13,7 +13,9 @@
       ],
       "cwd": "/ABSOLUTE/PATH/TO/DAMASK-MCP",
       "env": {
-        "PYTHONPATH": "/ABSOLUTE/PATH/TO/DAMASK-MCP/src"
+        "PYTHONPATH": "/ABSOLUTE/PATH/TO/DAMASK-MCP/src",
+        "DAMASK_MCP_WORKSPACES": "/ABSOLUTE/PATH/TO/DAMASK-MCP/workspaces",
+        "DAMASK_GRID_EXECUTABLE": "/ABSOLUTE/PATH/TO/DAMASK_grid"
       }
     }
   }

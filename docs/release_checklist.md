@@ -20,6 +20,6 @@ Use this checklist before tagging or publishing DAMASK MCP.
 ## Deployment Readiness
 
 - Hosted runtime can import `damask`.
-- Hosted runtime has `DAMASK_grid` if runner tools are enabled.
+- Hosted runtime has `DAMASK_grid` on `PATH`, or `DAMASK_GRID_EXECUTABLE` points to the executable, if runner tools are enabled.
 - Runner timeout and workspace storage limits are appropriate.
 - Public MCP surface has been reviewed for tools that mutate files or execute solver binaries.
