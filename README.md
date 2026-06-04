@@ -58,19 +58,20 @@ Equivalent module entrypoint:
 python -m damask_mcp.mcp_servers.damask_server
 ```
 
-Portable FastMCP config:
-
-```bash
-mcp run server.py
-```
-
-The root-level `fastmcp.json` is kept as an optional compatibility config for users of the separate FastMCP CLI. Install `damask-mcp[fastmcp-cli]` if you want to use:
+FastMCP direct entrypoint:
 
 ```bash
 fastmcp run server.py:mcp
+```
+
+FastMCP deployment config:
+
+```bash
 fastmcp inspect fastmcp.json
 fastmcp run fastmcp.json --skip-env
 ```
+
+The root-level `fastmcp.json` uses `streamable-http` on `127.0.0.1:8081/mcp`, matching hosted FastMCP proxy runners that wait for a local HTTP MCP endpoint.
 
 ## Client Config Examples
 
@@ -87,14 +88,14 @@ Run these commands before opening a release or deployment:
 
 ```bash
 python -m pytest tests
-python -c "import asyncio; from server import mcp; print(mcp.name, len(asyncio.run(mcp.list_tools())))"
+fastmcp inspect fastmcp.json
 python -c "import damask; print(damask.__version__)"
 ```
 
 Expected local baseline:
 
 - `pytest`: all tests pass
-- MCP server import check: server name `damask`, 69 tools
+- `fastmcp inspect`: server name `damask`, 69 tools
 - `damask`: import succeeds
 
 ## Architecture

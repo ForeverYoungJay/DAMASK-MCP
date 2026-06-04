@@ -30,7 +30,7 @@ def test_server_registry_lists_validation_and_unified_servers():
     assert "unified" in result["servers"]
 
 
-def test_unified_server_lists_registered_tools_with_official_sdk():
+def test_unified_server_lists_registered_tools_with_fastmcp():
     tools = asyncio.run(damask_server.mcp.list_tools())
 
     assert damask_server.mcp.name == "damask"

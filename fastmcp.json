@@ -5,7 +5,10 @@
     "entrypoint": "mcp"
   },
   "deployment": {
-    "transport": "stdio",
+    "transport": "streamable-http",
+    "host": "127.0.0.1",
+    "port": 8081,
+    "path": "/mcp",
     "log_level": "INFO"
   }
 }

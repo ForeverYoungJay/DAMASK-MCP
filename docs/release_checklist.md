@@ -6,8 +6,7 @@ Use this checklist before tagging or publishing DAMASK MCP.
 
 - `python -m pip install -e ".[dev]"`
 - `python -m pytest tests`
-- `python -c "import asyncio; from server import mcp; print(mcp.name, len(asyncio.run(mcp.list_tools())))"`
-- `fastmcp inspect fastmcp.json` if validating the optional FastMCP CLI path
+- `fastmcp inspect fastmcp.json`
 - `python -c "import damask; print(damask.__version__)"`
 
 ## Repository Readiness

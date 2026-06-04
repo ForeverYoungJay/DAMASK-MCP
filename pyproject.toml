@@ -23,6 +23,7 @@ classifiers = [
   "Topic :: Scientific/Engineering",
 ]
 dependencies = [
+  "fastmcp>=3,<4",
   "mcp[cli]>=1.27",
   "pydantic",
   "pyyaml",
@@ -41,9 +42,6 @@ damask-mcp = "damask_mcp.mcp_servers.damask_server:main"
 [project.optional-dependencies]
 dev = [
   "pytest",
-]
-fastmcp-cli = [
-  "fastmcp>=3,<4",
 ]
 
 [tool.setuptools]

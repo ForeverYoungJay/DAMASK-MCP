@@ -5,10 +5,10 @@ from __future__ import annotations
 from typing import Any, Callable
 
 try:
-    from mcp.server.fastmcp import FastMCP
+    from fastmcp import FastMCP
 except ImportError:
     try:
-        from fastmcp import FastMCP  # type: ignore[no-redef]
+        from mcp.server.fastmcp import FastMCP  # type: ignore[no-redef]
     except ImportError:
         class FastMCP:  # type: ignore[no-redef]
             """Minimal fallback used when FastMCP is not installed in the test environment."""

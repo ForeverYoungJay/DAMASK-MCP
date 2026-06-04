@@ -27,5 +27,5 @@ jobs:
       - name: Run tests
         run: python -m pytest tests
 
-      - name: Inspect MCP server
+      - name: Inspect FastMCP server
         run: python -c "import asyncio; from server import mcp; tools = asyncio.run(mcp.list_tools()); assert len(tools) == 69, len(tools); print(f'{mcp.name}: {len(tools)} tools')"
