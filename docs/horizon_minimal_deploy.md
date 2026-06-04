@@ -19,7 +19,7 @@ This repo already has:
 1. Push the repository to GitHub.
 2. Confirm the server loads locally:
    ```bash
-   conda run -n damaskcp python -c "import asyncio; from server import mcp; print(mcp.name, len(asyncio.run(mcp.list_tools())))"
+   conda run -n <DAMASK_CONDA_ENV> python -c "import asyncio; from server import mcp; print(mcp.name, len(asyncio.run(mcp.list_tools())))"
    ```
 3. Sign in to Prefect Horizon with GitHub.
 4. Create a new Horizon project from the `DAMASK-MCP` repository.
@@ -33,6 +33,7 @@ This repo already has:
 - Confirm whether the hosted runtime will have access to a `DAMASK_grid` executable if you want runner tools enabled.
 - Set `DAMASK_MCP_WORKSPACES` to a writable mounted directory if generated inputs must be inspected or reused outside the MCP process.
 - Set `DAMASK_GRID_EXECUTABLE` to the absolute solver path when `DAMASK_grid` is not discoverable on `PATH`.
+- Set `MCP_BEARER_TOKEN` when the public HTTP endpoint should require `Authorization: Bearer <token>`.
 - Decide whether to expose all tools or trim the public surface later.
 - Add any required secrets as Horizon environment variables rather than hardcoding them.
 

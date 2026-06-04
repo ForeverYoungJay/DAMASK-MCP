@@ -6,7 +6,7 @@
         "run",
         "--no-capture-output",
         "-n",
-        "damaskcp",
+        "<DAMASK_CONDA_ENV>",
         "python",
         "-m",
         "damask_mcp.mcp_servers.damask_server"

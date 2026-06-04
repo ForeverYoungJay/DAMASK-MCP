@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from damask_mcp.mcp_servers._fastmcp import FastMCP
 from damask_mcp.adapter.api_registry import SERVER_REGISTRY, list_registered_servers
+from damask_mcp.mcp_servers._fastmcp import FastMCP
+from damask_mcp.mcp_servers.auth import auth_provider_from_environment
 from damask_mcp.mcp_servers import (
     damask_core_server,
     damask_misc_server,
@@ -15,7 +16,7 @@ from damask_mcp.mcp_servers import (
     damask_validation_server,
 )
 
-mcp = FastMCP("damask")
+mcp = FastMCP("damask", auth=auth_provider_from_environment())
 
 _SERVER_MODULES = {
     "core": damask_core_server,

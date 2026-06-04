@@ -21,7 +21,7 @@ The unified server registers 69 MCP tools.
 
 ## Install
 
-Create or activate a Python environment with DAMASK support, then install this project:
+Create or activate a Python environment with DAMASK support, then install this project. Do not rely on the system `python` or `python3` unless that interpreter can import `damask` and can see the `DAMASK_grid` executable.
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -29,10 +29,10 @@ python -m pip install -e ".[dev]"
 
 The adapter prefers an installed `damask` Python package. If this repository also contains a local `damask-3.0.2/python` source tree, it will fall back to that automatically.
 
-If you already have a Conda environment such as `damaskcp`, install from the repository root:
+If you already have a Conda environment for DAMASK, install from the repository root. Replace `<DAMASK_CONDA_ENV>` with the user's actual environment name:
 
 ```bash
-conda activate damaskcp
+conda activate <DAMASK_CONDA_ENV>
 python -m pip install -e ".[dev]"
 ```
 
@@ -43,6 +43,12 @@ python -c "import damask_mcp, damask_mcp.adapter; print(damask_mcp.__file__); pr
 ```
 
 Both paths should point inside this repository.
+
+For a complete local setup guide, see:
+
+- [docs/local_user_setup.md](./docs/local_user_setup.md)
+
+That guide includes the exact values to enter in a "Connect to a custom MCP" STDIO install form.
 
 ## Run
 
@@ -77,6 +83,8 @@ By default, generated inputs and outputs are written under the repository-local 
 
 Runner tools require a `DAMASK_grid` executable in the MCP runtime, not only the `damask` Python package. Put `DAMASK_grid` on `PATH` or set `DAMASK_GRID_EXECUTABLE` to its absolute path. The `find_damask_executables` tool reports every probe it tried, the selected executable, environment hints, and setup guidance; ask users to run it first when solver execution is unavailable.
 
+For local desktop users, the recommended pattern is to start the MCP with `conda run -n <env> ...`, where `<env>` is the same Conda environment that contains both the `damask` Python package and `DAMASK_grid`.
+
 Recommended runtime environment:
 
 ```bash
@@ -92,6 +100,10 @@ Example client configs are included here:
 - [examples/claude_desktop_config.json](./examples/claude_desktop_config.json)
 
 Update the placeholder absolute paths before using them. The examples set `PYTHONPATH` to this repository's `src/` directory to avoid accidentally loading another editable install. They also show `DAMASK_MCP_WORKSPACES` and `DAMASK_GRID_EXECUTABLE`, which are the two important settings for reproducible solver runs.
+
+For hosted HTTP installation with `https://DAMASK-MCP.fastmcp.app/mcp`, bearer token, and optional headers, see:
+
+- [docs/remote_fastmcp_install.md](./docs/remote_fastmcp_install.md)
 
 ## Verification
 
