@@ -79,7 +79,7 @@ fastmcp run fastmcp.json --skip-env
 
 The root-level `fastmcp.json` uses `streamable-http` on `127.0.0.1:8081/mcp`, matching hosted FastMCP proxy runners that wait for a local HTTP MCP endpoint.
 
-By default, generated inputs and outputs are written under the repository-local `workspaces/` directory. For hosted runtimes with a read-only application directory, set `DAMASK_MCP_WORKSPACES` to a writable local or mounted directory. Use an explicit workspace directory when you need both the MCP process and a local shell/container to see the same generated inputs.
+By default, generated inputs and outputs are written under `workspaces/` in the MCP process current working directory. In local STDIO installs, this is the "Working directory" field. In hosted runtimes, do not use a read-only application directory such as `/app`; set `DAMASK_MCP_WORKSPACES` to a writable mounted directory. Use an explicit workspace directory when you need both the MCP process and a local shell/container to see the same generated inputs.
 
 Runner tools require a `DAMASK_grid` executable in the MCP runtime, not only the `damask` Python package. Put `DAMASK_grid` on `PATH` or set `DAMASK_GRID_EXECUTABLE` to its absolute path. The `find_damask_executables` tool reports every probe it tried, the selected executable, environment hints, and setup guidance; ask users to run it first when solver execution is unavailable.
 
@@ -104,6 +104,8 @@ Update the placeholder absolute paths before using them. The examples set `PYTHO
 For hosted HTTP installation with `https://DAMASK-MCP.fastmcp.app/mcp`, bearer token, and optional headers, see:
 
 - [docs/remote_fastmcp_install.md](./docs/remote_fastmcp_install.md)
+
+For remote deployments, the person deploying the MCP server must configure DAMASK on that remote runtime. Connector users only provide the URL and token; their local Conda environment is not visible to the remote server.
 
 ## Verification
 

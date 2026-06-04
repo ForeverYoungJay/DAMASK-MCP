@@ -42,10 +42,10 @@ Do not install into a different Python environment and then run MCP from another
 
 ## Use a Local Workspace
 
-By default, DAMASK MCP writes generated files under:
+By default, DAMASK MCP writes generated files under `workspaces/` in the MCP process current working directory:
 
 ```text
-<DAMASK-MCP>/workspaces/
+<working-directory>/workspaces/
 ```
 
 For a local desktop setup, this is usually the best choice because the MCP process and the user's shell can both inspect the same files.
@@ -176,7 +176,7 @@ create_workspace
 
 `/app/workspaces` is read-only:
 
-Set `DAMASK_MCP_WORKSPACES` to a writable local directory. Local users should normally use `<DAMASK-MCP>/workspaces`.
+`/app` is usually a hosting platform's application directory. It may contain the deployed code and may be read-only. Set the MCP install form Working directory to the local repository path for STDIO installs, or set `DAMASK_MCP_WORKSPACES` to a writable directory. Local users should normally use `<DAMASK-MCP>/workspaces`.
 
 MCP can import `damask` but cannot find `DAMASK_grid`:
 

@@ -17,15 +17,15 @@ def project_root() -> Path:
 def workspaces_root() -> Path:
     """Return the workspace root and create it if needed."""
     configured = os.environ.get("DAMASK_MCP_WORKSPACES")
-    root = Path(configured).expanduser() if configured else project_root() / "workspaces"
+    root = Path(configured).expanduser() if configured else Path.cwd() / "workspaces"
 
     try:
         root.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
-        configured_hint = "the configured DAMASK_MCP_WORKSPACES" if configured else "the local project workspaces directory"
+        configured_hint = "the configured DAMASK_MCP_WORKSPACES" if configured else "the current working directory workspaces"
         raise RuntimeError(
             f"Could not create {configured_hint}: {root}. "
-            "Set DAMASK_MCP_WORKSPACES to a writable local directory shared with the MCP runtime."
+            "Set DAMASK_MCP_WORKSPACES to a writable directory shared with the MCP runtime."
         ) from exc
     return root
 

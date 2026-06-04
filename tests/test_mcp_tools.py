@@ -65,3 +65,16 @@ def test_runner_server_forwards_run_damask_grid_keyword_arguments(monkeypatch):
         "numerics": "numerics.yaml",
         "timeout_seconds": 123,
     }
+
+
+def test_create_workspace_returns_structured_error(monkeypatch):
+    def fake_resolve_workspace_dir(name):
+        raise RuntimeError("workspace root is read-only")
+
+    monkeypatch.setattr(damask_preprocess_server, "resolve_workspace_dir", fake_resolve_workspace_dir)
+
+    result = damask_preprocess_server.create_workspace("demo")
+
+    assert result["ok"] is False
+    assert result["name"] == "demo"
+    assert "DAMASK_MCP_WORKSPACES" in result["hint"]

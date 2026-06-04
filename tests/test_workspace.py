@@ -12,6 +12,13 @@ def test_workspaces_root_exists():
     assert workspace.workspaces_root().name == "workspaces"
 
 
+def test_workspaces_root_defaults_to_current_working_directory(monkeypatch, tmp_path):
+    monkeypatch.delenv("DAMASK_MCP_WORKSPACES", raising=False)
+    monkeypatch.chdir(tmp_path)
+
+    assert workspace.workspaces_root() == tmp_path / "workspaces"
+
+
 def test_workspaces_root_can_be_configured(monkeypatch, tmp_path):
     configured = tmp_path / "mcp-workspaces"
     monkeypatch.setenv("DAMASK_MCP_WORKSPACES", str(configured))

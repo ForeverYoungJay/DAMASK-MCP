@@ -53,14 +53,25 @@ def write_yaml_file(path: str, data: object) -> dict[str, Any]:
 @mcp.tool()
 def create_workspace(name: str) -> dict[str, Any]:
     """Create or reuse a workspace under workspaces/."""
-    workspace_path = resolve_workspace_dir(name)
-    workspace_path.mkdir(parents=True, exist_ok=True)
-    (workspace_path / "results").mkdir(parents=True, exist_ok=True)
-    return {
-        "ok": True,
-        "name": name,
-        "path": str(workspace_path.resolve()),
-    }
+    try:
+        workspace_path = resolve_workspace_dir(name)
+        workspace_path.mkdir(parents=True, exist_ok=True)
+        (workspace_path / "results").mkdir(parents=True, exist_ok=True)
+        return {
+            "ok": True,
+            "name": name,
+            "path": str(workspace_path.resolve()),
+        }
+    except Exception as exc:
+        return {
+            "ok": False,
+            "name": name,
+            "error": f"{type(exc).__name__}: {exc}",
+            "hint": (
+                "Set DAMASK_MCP_WORKSPACES to a writable directory, or set the MCP working directory "
+                "to a writable location before creating workspaces."
+            ),
+        }
 
 
 @mcp.tool()

@@ -30,12 +30,24 @@ This repo already has:
 ## Recommended Before Public Release
 
 - Confirm whether the hosted runtime will have a working `damask` Python package.
-- Confirm whether the hosted runtime will have access to a `DAMASK_grid` executable if you want runner tools enabled.
+- Confirm whether the hosted runtime will have access to a `DAMASK_grid` executable if you want runner tools enabled. The remote MCP server cannot use a connector user's local `DAMASK_grid`.
 - Set `DAMASK_MCP_WORKSPACES` to a writable mounted directory if generated inputs must be inspected or reused outside the MCP process.
 - Set `DAMASK_GRID_EXECUTABLE` to the absolute solver path when `DAMASK_grid` is not discoverable on `PATH`.
 - Set `MCP_BEARER_TOKEN` when the public HTTP endpoint should require `Authorization: Bearer <token>`.
 - Decide whether to expose all tools or trim the public surface later.
 - Add any required secrets as Horizon environment variables rather than hardcoding them.
+
+## Deployer Runtime Variables
+
+Set these in the hosting provider, not in the connector install form:
+
+```bash
+DAMASK_MCP_WORKSPACES=/writable/path/workspaces
+DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
+MCP_BEARER_TOKEN=<optional-shared-token>
+```
+
+After deployment, call `check_damask_installation` and `find_damask_executables` through the MCP client. The runner tools are ready only when `find_damask_executables` reports a `selected` executable.
 
 ## Public Release Caveat
 
