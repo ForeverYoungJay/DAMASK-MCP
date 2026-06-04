@@ -43,7 +43,7 @@ dev = [
   "pytest",
 ]
 fastmcp-cli = [
-  "fastmcp>=2.2",
+  "fastmcp>=3,<4",
 ]
 
 [tool.setuptools]

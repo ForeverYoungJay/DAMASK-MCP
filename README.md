@@ -67,6 +67,7 @@ mcp run server.py
 The root-level `fastmcp.json` is kept as an optional compatibility config for users of the separate FastMCP CLI. Install `damask-mcp[fastmcp-cli]` if you want to use:
 
 ```bash
+fastmcp run server.py:mcp
 fastmcp inspect fastmcp.json
 fastmcp run fastmcp.json --skip-env
 ```
