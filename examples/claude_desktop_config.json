@@ -7,15 +7,13 @@
         "--no-capture-output",
         "-n",
         "damaskcp",
-        "fastmcp",
-        "run",
-        "fastmcp.json",
-        "--skip-env"
+        "python",
+        "-m",
+        "damask_mcp.mcp_servers.damask_server"
       ],
       "cwd": "/ABSOLUTE/PATH/TO/DAMASK-MCP",
       "env": {
-        "PYTHONPATH": "/ABSOLUTE/PATH/TO/DAMASK-MCP/src",
-        "FASTMCP_LOG_LEVEL": "INFO"
+        "PYTHONPATH": "/ABSOLUTE/PATH/TO/DAMASK-MCP/src"
       }
     }
   }

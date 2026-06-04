@@ -19,7 +19,7 @@ This repo already has:
 1. Push the repository to GitHub.
 2. Confirm the server loads locally:
    ```bash
-   conda run -n damaskcp fastmcp inspect fastmcp.json
+   conda run -n damaskcp python -c "import asyncio; from server import mcp; print(mcp.name, len(asyncio.run(mcp.list_tools())))"
    ```
 3. Sign in to Prefect Horizon with GitHub.
 4. Create a new Horizon project from the `DAMASK-MCP` repository.

@@ -1,6 +1,6 @@
 import numpy as np
 
-from damask_mcp_adapter.modules import config_material, grid, loading, rotation
+from damask_mcp.adapter.modules import config_material, grid, loading, rotation
 
 
 class FakeLoadcaseGrid(dict):
@@ -48,6 +48,16 @@ def test_create_simple_tension_load_yaml(monkeypatch):
     monkeypatch.setattr(loading, "import_damask", lambda: FakeDamask)
     result = loading.create_simple_tension_load_yaml("demo_tension/load.yaml", 1e-3, 0.1, 10)
     assert result["ok"] is True
+
+
+def test_create_load_yaml_from_template(monkeypatch):
+    monkeypatch.setattr(loading, "write_yaml_file", lambda path, data: {"ok": True, "path": path, "data": data})
+    result = loading.create_load_yaml_from_template(
+        "demo_tension/load.yaml",
+        {"loadstep": [{"boundary_conditions": {"mechanical": {"P": [[0, "x", "x"], ["x", 0, "x"], ["x", "x", 0]]}}}]},
+    )
+    assert result["ok"] is True
+    assert result["created_from"]["mode"] == "template"
 
 
 def test_create_material_yaml(monkeypatch):

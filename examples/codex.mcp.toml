@@ -5,10 +5,9 @@ args = [
   "--no-capture-output",
   "-n",
   "damaskcp",
-  "fastmcp",
-  "run",
-  "fastmcp.json",
-  "--skip-env"
+  "python",
+  "-m",
+  "damask_mcp.mcp_servers.damask_server"
 ]
 cwd = "/ABSOLUTE/PATH/TO/DAMASK-MCP"
 startup_timeout_sec = 30
@@ -16,4 +15,3 @@ tool_timeout_sec = 3600
 
 [mcp_servers.damask.env]
 PYTHONPATH = "/ABSOLUTE/PATH/TO/DAMASK-MCP/src"
-FASTMCP_LOG_LEVEL = "INFO"

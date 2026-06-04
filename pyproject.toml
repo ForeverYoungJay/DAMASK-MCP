@@ -8,9 +8,22 @@ version = "0.1.0"
 description = "Standalone FastMCP servers for DAMASK preprocessing, validation, execution, and post-processing."
 readme = "README.md"
 requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  { name = "DAMASK MCP contributors" },
+]
+keywords = ["damask", "mcp", "fastmcp", "materials-science", "crystal-plasticity"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+]
 dependencies = [
-  "fastmcp>=2.2",
-  "mcp",
+  "mcp[cli]>=1.27",
   "pydantic",
   "pyyaml",
   "damask",
@@ -23,11 +36,14 @@ dependencies = [
 ]
 
 [project.scripts]
-damask-mcp = "damask_copilot.mcp_servers.damask_server:main"
+damask-mcp = "damask_mcp.mcp_servers.damask_server:main"
 
 [project.optional-dependencies]
 dev = [
   "pytest",
+]
+fastmcp-cli = [
+  "fastmcp>=2.2",
 ]
 
 [tool.setuptools]

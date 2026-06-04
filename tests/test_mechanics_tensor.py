@@ -1,4 +1,4 @@
-from damask_mcp_adapter.modules import mechanics, tensor
+from damask_mcp.adapter.modules import mechanics, tensor
 
 
 class FakeMechanicsModule:

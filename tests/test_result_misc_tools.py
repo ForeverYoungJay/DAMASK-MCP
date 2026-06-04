@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
-from damask_mcp_adapter.modules import grid_filter_tools, result_tools, table_tools, util_tools
+from damask_mcp.adapter.modules import grid_filter_tools, result_tools, table_tools, util_tools
 
 
 class FakeResult:

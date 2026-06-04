@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from damask_mcp_adapter import validators
+from damask_mcp.adapter import validators
 
 
 def test_validate_workspace_name_accepts_safe_names():

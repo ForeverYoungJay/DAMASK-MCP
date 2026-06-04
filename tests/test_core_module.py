@@ -1,4 +1,4 @@
-from damask_mcp_adapter.modules import core
+from damask_mcp.adapter.modules import core
 
 
 class FakeRotation:

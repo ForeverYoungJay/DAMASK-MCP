@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 
-from damask_mcp_adapter.modules import grid_tools, material_tools, seed_tools
+from damask_mcp.adapter.modules import grid_tools, material_tools, seed_tools
 
 
 class FakeConfig(dict):

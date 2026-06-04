@@ -1,6 +1,6 @@
 import numpy as np
 
-from damask_mcp_adapter.serializers import summarize_array, to_jsonable
+from damask_mcp.adapter.serializers import summarize_array, to_jsonable
 
 
 def test_summarize_array_basic():

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from damask_copilot.tools.validation import validate_simulation_setup
+from damask_mcp.tools.validation import validate_simulation_setup
 
 
 def _write_material_yaml(path: Path) -> None:
@@ -33,7 +33,7 @@ def test_validate_simulation_setup_passes_for_consistent_stub_files(tmp_path):
     _write_material_yaml(material_path)
     _write_load_yaml(load_path)
     geometry_path.write_text(
-        '{"format":"damask_copilot_stub_geometry_v1","cells":[4,4,4],"size":[1.0,1.0,1.0],"grains":1,"material_indices":[0]}',
+        '{"format":"damask_mcp_stub_geometry_v1","cells":[4,4,4],"size":[1.0,1.0,1.0],"grains":1,"material_indices":[0]}',
         encoding="utf-8",
     )
 
@@ -52,7 +52,7 @@ def test_validate_simulation_setup_flags_geometry_material_mismatch(tmp_path):
     _write_material_yaml(material_path)
     _write_load_yaml(load_path)
     geometry_path.write_text(
-        '{"format":"damask_copilot_stub_geometry_v1","cells":[4,4,4],"size":[1.0,1.0,1.0],"grains":2,"material_indices":[0,1]}',
+        '{"format":"damask_mcp_stub_geometry_v1","cells":[4,4,4],"size":[1.0,1.0,1.0],"grains":2,"material_indices":[0,1]}',
         encoding="utf-8",
     )
 

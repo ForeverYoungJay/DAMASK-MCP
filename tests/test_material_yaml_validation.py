@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from damask_copilot.tools.validation import validate_material_yaml
+from damask_mcp.tools.validation import validate_material_yaml
 
 
 def test_valid_material_yaml_passes_basic_validation(tmp_path):

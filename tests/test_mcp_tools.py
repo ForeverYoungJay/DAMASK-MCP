@@ -1,4 +1,4 @@
-from damask_copilot.mcp_servers import (
+from damask_mcp.mcp_servers import (
     damask_server,
     damask_core_server,
     damask_misc_server,
@@ -7,7 +7,8 @@ from damask_copilot.mcp_servers import (
     damask_runner_server,
     damask_validation_server,
 )
-from damask_mcp_adapter.api_registry import list_registered_servers
+from damask_mcp.adapter.api_registry import list_registered_servers
+import asyncio
 
 
 def test_server_tool_docstrings_exist():
@@ -27,3 +28,11 @@ def test_server_registry_lists_validation_and_unified_servers():
     assert result["ok"] is True
     assert "validation" in result["servers"]
     assert "unified" in result["servers"]
+
+
+def test_unified_server_lists_registered_tools_with_official_sdk():
+    tools = asyncio.run(damask_server.mcp.list_tools())
+
+    assert damask_server.mcp.name == "damask"
+    assert len(tools) == 69
+    assert {tool.name for tool in tools} >= {"describe_damask_mcp", "create_load_yaml_from_template"}

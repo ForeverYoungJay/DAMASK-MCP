@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from damask_mcp_adapter import workspace
+from damask_mcp.adapter import workspace
 
 
 def test_project_root_contains_src():
