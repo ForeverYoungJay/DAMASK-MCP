@@ -8,6 +8,21 @@ from damask_mcp.adapter.modules.material_tools import inspect_material_yaml, val
 from damask_mcp.adapter.validators import ensure_workspace_write_path
 from damask_mcp.adapter.workspace import import_damask
 
+CUBIC_HOOKE_LATTICES = {"cP", "cI", "cF"}
+CUBIC_HOOKE_REQUIRED = {"C_11", "C_12", "C_44"}
+
+
+def validate_elastic_parameters(lattice: str, elastic: dict[str, Any]) -> None:
+    """Reject common incomplete elastic parameter sets before writing material.yaml."""
+    elastic_type = str(elastic.get("type", "")).lower()
+    if lattice in CUBIC_HOOKE_LATTICES and elastic_type == "hooke":
+        missing = sorted(CUBIC_HOOKE_REQUIRED.difference(elastic))
+        if missing:
+            raise ValueError(
+                "Cubic Hooke elasticity requires C_11, C_12, and C_44. "
+                f"Missing: {', '.join(missing)}."
+            )
+
 
 def create_material_yaml(
     path: str,
@@ -22,6 +37,7 @@ def create_material_yaml(
         raise ValueError("lattice is required; DAMASK MCP does not assume a material lattice.")
     if not isinstance(elastic, dict) or not elastic:
         raise ValueError("elastic must be a non-empty DAMASK elastic parameter mapping.")
+    validate_elastic_parameters(lattice, elastic)
     output_path = ensure_workspace_write_path(path)
     damask = import_damask()
     phase_data: dict[str, Any] = {
@@ -84,5 +100,6 @@ __all__ = [
     "create_material_yaml",
     "create_material_yaml_from_template",
     "inspect_material_yaml",
+    "validate_elastic_parameters",
     "validate_material_yaml",
 ]

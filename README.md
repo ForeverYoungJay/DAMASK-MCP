@@ -73,6 +73,8 @@ fastmcp run fastmcp.json --skip-env
 
 The root-level `fastmcp.json` uses `streamable-http` on `127.0.0.1:8081/mcp`, matching hosted FastMCP proxy runners that wait for a local HTTP MCP endpoint.
 
+For hosted runtimes with a read-only application directory, set `DAMASK_MCP_WORKSPACES` to a writable directory. If it is not set and repository-local `workspaces/` cannot be created, DAMASK MCP falls back to `/tmp/damask-mcp-workspaces`.
+
 ## Client Config Examples
 
 Example client configs are included here:
@@ -131,6 +133,7 @@ server.py:mcp
 
 - MCP tools return JSON-serializable dictionaries.
 - Material and generic load builders require explicit user-provided model parameters; they do not assume elastic constants, plasticity laws, lattices, or default deformation gradients.
+- Cubic Hooke materials (`cP`, `cI`, `cF`) must provide `C_11`, `C_12`, and `C_44`; `C_11` alone is rejected.
 - File writes are restricted to `workspaces/`.
 - Runner subprocess calls do not use `shell=True`.
 - Large arrays are summarized instead of returned directly.

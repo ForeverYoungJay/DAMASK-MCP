@@ -7,6 +7,7 @@ from typing import Any
 
 import yaml
 
+from damask_mcp.adapter.modules.config_material import validate_elastic_parameters
 from damask_mcp.mcp_clients.damask_preprocess_client import DAMASKPreprocessClient
 
 
@@ -46,6 +47,7 @@ def build_material_yaml(spec: dict[str, Any], output_path: str) -> str:
             raise ValueError("build_material_yaml requires 'lattice' when a full 'phase' mapping is not provided.")
         if "elastic" not in spec:
             raise ValueError("build_material_yaml requires 'elastic' when a full 'phase' mapping is not provided.")
+        validate_elastic_parameters(spec["lattice"], spec["elastic"])
         mechanical: dict[str, Any] = {"elastic": spec["elastic"]}
         if "plastic" in spec:
             mechanical["plastic"] = spec["plastic"]
