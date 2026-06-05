@@ -17,7 +17,7 @@ This project is ready for local MCP use and public release-candidate testing. Th
 - Result inspection, VTK export, and stress-strain extraction
 - Miscellaneous table, utility, and regular-grid helpers
 
-The unified server registers 69 MCP tools.
+The unified server registers 70 MCP tools.
 
 ## Install
 
@@ -108,6 +108,7 @@ One typical remote setup is:
 ```bash
 conda create -n damask-mcp python=3.11
 conda activate damask-mcp
+conda install -c conda-forge damask
 python -m pip install -e ".[dev]"
 python -c "import damask; print(damask.__version__)"
 which DAMASK_grid || echo "Set DAMASK_GRID_EXECUTABLE"
@@ -159,7 +160,7 @@ python -c "import damask; print(damask.__version__)"
 Expected local baseline:
 
 - `pytest`: all tests pass
-- `fastmcp inspect`: server name `damask`, 69 tools
+- `fastmcp inspect`: server name `damask`, 70 tools
 - `damask`: import succeeds
 
 ## Architecture
@@ -195,7 +196,7 @@ server.py:mcp
 
 - MCP tools return JSON-serializable dictionaries.
 - Material and generic load builders require explicit user-provided model parameters; they do not assume elastic constants, plasticity laws, lattices, or default deformation gradients.
-- Cubic Hooke materials (`cP`, `cI`, `cF`) must provide `C_11`, `C_12`, and `C_44`; `C_11` alone is rejected.
+- Material builders write the user-provided elastic mapping as-is; solver completeness is checked by DAMASK or explicit validation tools.
 - File reads and writes are restricted to `workspaces/`.
 - Runner subprocess calls do not use `shell=True`.
 - Large arrays are summarized instead of returned directly.
@@ -220,6 +221,7 @@ The adapter uses confirmed DAMASK APIs including:
 Core:
 
 - `check_damask_installation`
+- `diagnose_damask_runtime`
 - `get_damask_version`
 - `list_damask_modules`
 - `inspect_damask_class`

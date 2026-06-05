@@ -8,20 +8,10 @@ from damask_mcp.adapter.modules.material_tools import inspect_material_yaml, val
 from damask_mcp.adapter.validators import ensure_workspace_write_path
 from damask_mcp.adapter.workspace import import_damask
 
-CUBIC_HOOKE_LATTICES = {"cP", "cI", "cF"}
-CUBIC_HOOKE_REQUIRED = {"C_11", "C_12", "C_44"}
-
 
 def validate_elastic_parameters(lattice: str, elastic: dict[str, Any]) -> None:
-    """Reject common incomplete elastic parameter sets before writing material.yaml."""
-    elastic_type = str(elastic.get("type", "")).lower()
-    if lattice in CUBIC_HOOKE_LATTICES and elastic_type == "hooke":
-        missing = sorted(CUBIC_HOOKE_REQUIRED.difference(elastic))
-        if missing:
-            raise ValueError(
-                "Cubic Hooke elasticity requires C_11, C_12, and C_44. "
-                f"Missing: {', '.join(missing)}."
-            )
+    """Reserved hook for elastic parameter validation without material-specific defaults."""
+    del lattice, elastic
 
 
 def create_material_yaml(

@@ -8,6 +8,7 @@ from damask_mcp.mcp_servers._fastmcp import FastMCP
 
 from damask_mcp.adapter.modules.core import (
     check_damask_installation as check_damask_installation_impl,
+    diagnose_damask_runtime as diagnose_damask_runtime_impl,
     get_damask_version as get_damask_version_impl,
     inspect_damask_class as inspect_damask_class_impl,
     inspect_damask_function as inspect_damask_function_impl,
@@ -21,6 +22,12 @@ mcp = FastMCP("damask-core")
 def check_damask_installation() -> dict[str, Any]:
     """Check whether the local DAMASK Python package can be imported."""
     return check_damask_installation_impl()
+
+
+@mcp.tool()
+def diagnose_damask_runtime() -> dict[str, Any]:
+    """Diagnose Python, workspace, cache, and solver readiness for this MCP runtime."""
+    return diagnose_damask_runtime_impl()
 
 
 @mcp.tool()

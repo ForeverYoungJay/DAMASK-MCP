@@ -10,6 +10,7 @@ SERVER_REGISTRY: dict[str, dict[str, Any]] = {
         "module": "damask_mcp.mcp_servers.damask_core_server",
         "tools": [
             "check_damask_installation",
+            "diagnose_damask_runtime",
             "get_damask_version",
             "list_damask_modules",
             "inspect_damask_class",

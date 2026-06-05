@@ -31,6 +31,7 @@ This repo already has:
 
 - Confirm whether the hosted runtime will have a working `damask` Python package.
 - Confirm whether the hosted runtime will have access to a `DAMASK_grid` executable if you want runner tools enabled. The remote MCP server cannot use a connector user's local `DAMASK_grid`.
+- For Conda-based deployments, install the official metapackage with `conda install -c conda-forge damask`; installing only the Python package may not provide `DAMASK_grid`.
 - Set `DAMASK_MCP_WORKSPACES` to a writable mounted directory; file reads and writes are restricted to that tree.
 - Set `DAMASK_GRID_EXECUTABLE` to the absolute solver path when `DAMASK_grid` is not discoverable on `PATH`.
 - Set `MCP_BEARER_TOKEN` when the public HTTP endpoint should require `Authorization: Bearer <token>`.
@@ -50,7 +51,7 @@ MCP_BEARER_TOKEN=<optional-shared-token>
 
 If the platform provides a persistent writable volume such as `/data`, prefer `DAMASK_MCP_WORKSPACES=/data/workspaces`. If it only provides ephemeral writable storage, `/tmp/damask-mcp/workspaces` is the safest default.
 
-After deployment, call `check_damask_installation` and `find_damask_executables` through the MCP client. The runner tools are ready only when `find_damask_executables` reports a `selected` executable.
+After deployment, call `diagnose_damask_runtime`, `check_damask_installation`, and `find_damask_executables` through the MCP client. The runner tools are ready only when `diagnose_damask_runtime.ok` is true and `find_damask_executables` reports a `selected` executable.
 
 ## Public Release Caveat
 

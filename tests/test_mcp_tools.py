@@ -13,6 +13,7 @@ import asyncio
 
 def test_server_tool_docstrings_exist():
     assert damask_core_server.check_damask_installation.__doc__
+    assert damask_core_server.diagnose_damask_runtime.__doc__
     assert damask_server.describe_damask_mcp.__doc__
     assert damask_preprocess_server.create_empty_material_yaml.__doc__
     assert damask_preprocess_server.create_material_yaml_from_template.__doc__
@@ -34,8 +35,12 @@ def test_unified_server_lists_registered_tools_with_fastmcp():
     tools = asyncio.run(damask_server.mcp.list_tools())
 
     assert damask_server.mcp.name == "damask"
-    assert len(tools) == 69
-    assert {tool.name for tool in tools} >= {"describe_damask_mcp", "create_load_yaml_from_template"}
+    assert len(tools) == 70
+    assert {tool.name for tool in tools} >= {
+        "describe_damask_mcp",
+        "create_load_yaml_from_template",
+        "diagnose_damask_runtime",
+    }
 
 
 def test_runner_server_forwards_run_damask_grid_keyword_arguments(monkeypatch):

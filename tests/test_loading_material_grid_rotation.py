@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from damask_mcp.adapter.modules import config_material, grid, loading, rotation
 
@@ -74,15 +73,19 @@ def test_create_material_yaml(monkeypatch):
     assert result["ok"] is True
 
 
-def test_create_material_yaml_rejects_incomplete_cubic_hooke():
-    with pytest.raises(ValueError, match="C_11, C_12, and C_44"):
-        config_material.create_material_yaml(
-            "demo_tension/material.yaml",
-            "Cu",
-            "Cu",
-            "cF",
-            {"type": "Hooke", "C_11": 198.0e9},
-        )
+def test_create_material_yaml_accepts_user_provided_incomplete_cubic_hooke(monkeypatch):
+    monkeypatch.setattr(config_material, "import_damask", lambda: FakeDamask)
+    monkeypatch.setattr(config_material, "inspect_material_yaml", lambda path: {"ok": True, "path": path})
+
+    result = config_material.create_material_yaml(
+        "demo_tension/material.yaml",
+        "Cu",
+        "Cu",
+        "cF",
+        {"type": "Hooke", "C_11": 198.0e9},
+    )
+
+    assert result["ok"] is True
 
 
 def test_rotation_wrapper(monkeypatch):

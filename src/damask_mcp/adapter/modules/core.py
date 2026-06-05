@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import os
 from pathlib import Path
 from typing import Any
 
+from damask_mcp.adapter.modules.runner import find_damask_executables
+from damask_mcp.adapter.workspace import preferred_workspaces_root, workspaces_root
+from damask_mcp.runtime import configure_runtime_environment, runtime_root
 from damask_mcp.adapter.workspace import damask_python_root, import_damask
 
 
@@ -57,6 +61,56 @@ def check_damask_installation() -> dict[str, Any]:
             "local_source_exists": local_source_root.exists(),
             "error": f"{type(exc).__name__}: {exc}",
         }
+
+
+def diagnose_damask_runtime() -> dict[str, Any]:
+    """Diagnose Python, workspace, cache, and solver readiness for this MCP runtime."""
+    runtime_env = configure_runtime_environment()
+    python_result = check_damask_installation()
+    solver_result = find_damask_executables()
+    workspace_result: dict[str, Any]
+    try:
+        workspace = workspaces_root()
+        workspace_result = {
+            "ok": True,
+            "path": str(workspace.resolve()),
+            "preferred_path": str(preferred_workspaces_root().resolve()),
+        }
+    except Exception as exc:
+        workspace_result = {
+            "ok": False,
+            "preferred_path": str(preferred_workspaces_root().resolve()),
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
+    recommendations: list[str] = []
+    if not python_result.get("ok"):
+        recommendations.append("Install the DAMASK Python package in the MCP runtime.")
+    if not solver_result.get("selected"):
+        recommendations.append(
+            "Install the DAMASK metapackage or solver binary in the MCP runtime, then set DAMASK_GRID_EXECUTABLE."
+        )
+    if not workspace_result.get("ok"):
+        recommendations.append("Set DAMASK_MCP_WORKSPACES to a writable directory such as /tmp/damask-mcp/workspaces.")
+
+    return {
+        "ok": bool(python_result.get("ok") and solver_result.get("selected") and workspace_result.get("ok")),
+        "python": python_result,
+        "solver": solver_result,
+        "workspace": workspace_result,
+        "runtime": {
+            "root": str(runtime_root().resolve()),
+            "environment": runtime_env,
+            "cwd": str(Path.cwd()),
+            "env": {
+                "DAMASK_MCP_RUNTIME_DIR": os.environ.get("DAMASK_MCP_RUNTIME_DIR"),
+                "DAMASK_MCP_WORKSPACES": os.environ.get("DAMASK_MCP_WORKSPACES"),
+                "DAMASK_GRID_EXECUTABLE": os.environ.get("DAMASK_GRID_EXECUTABLE"),
+                "CONDA_PREFIX": os.environ.get("CONDA_PREFIX"),
+            },
+        },
+        "recommendations": recommendations,
+    }
 
 
 def get_damask_version() -> dict[str, Any]:
@@ -147,6 +201,7 @@ def inspect_damask_function(function_name: str) -> dict[str, Any]:
 
 __all__ = [
     "check_damask_installation",
+    "diagnose_damask_runtime",
     "get_damask_version",
     "inspect_damask_class",
     "inspect_damask_function",

@@ -40,12 +40,16 @@ def test_build_material_yaml_requires_explicit_material_parameters(tmp_path):
         build_material_yaml({"phase_name": "phase_a", "lattice": "cF"}, str(tmp_path / "material.yaml"))
 
 
-def test_build_material_yaml_rejects_incomplete_cubic_hooke(tmp_path):
-    with pytest.raises(ValueError, match="C_11, C_12, and C_44"):
-        build_material_yaml(
-            {"phase_name": "Cu", "lattice": "cF", "elastic": {"type": "Hooke", "C_11": 198.0e9}},
-            str(tmp_path / "material.yaml"),
-        )
+def test_build_material_yaml_accepts_user_provided_incomplete_cubic_hooke(tmp_path):
+    material_path = tmp_path / "material.yaml"
+
+    build_material_yaml(
+        {"phase_name": "Cu", "lattice": "cF", "elastic": {"type": "Hooke", "C_11": 198.0e9}},
+        str(material_path),
+    )
+
+    payload = yaml.safe_load(material_path.read_text(encoding="utf-8"))
+    assert payload["phase"]["Cu"]["mechanical"]["elastic"] == {"type": "Hooke", "C_11": 198.0e9}
 
 
 def test_build_load_yaml_can_use_mcp_preprocess_client(monkeypatch, tmp_path):

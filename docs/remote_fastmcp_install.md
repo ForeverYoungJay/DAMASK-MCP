@@ -68,6 +68,14 @@ python -c "import damask; print(damask.__version__)"
 which DAMASK_grid
 ```
 
+For Conda-based deployments, install the official DAMASK metapackage, not only the Python package:
+
+```bash
+conda install -c conda-forge damask
+```
+
+That package is expected to provide both the Python processing tools and solver binaries such as `DAMASK_grid` on supported platforms.
+
 If `which DAMASK_grid` does not work in the hosted runtime, set:
 
 ```bash
@@ -77,11 +85,12 @@ export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
 The deployer should verify from the MCP client by running:
 
 ```text
+diagnose_damask_runtime
 check_damask_installation
 find_damask_executables
 ```
 
-`find_damask_executables` should return a non-null `selected` path before runner tools are advertised as fully working.
+`diagnose_damask_runtime.ok` should be true, and `find_damask_executables` should return a non-null `selected` path, before runner tools are advertised as fully working.
 
 ## Server Behavior
 
