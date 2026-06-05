@@ -19,6 +19,9 @@ def test_check_damask_installation(monkeypatch):
     result = core.check_damask_installation()
     assert result["ok"] is True
     assert result["version"] == "3.0.2"
+    assert result["import_location"] == "installed_package"
+    assert result["using_local_source"] is False
+    assert result["module_file"].endswith("/damask/__init__.py")
 
 
 def test_inspect_damask_class(monkeypatch):

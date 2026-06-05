@@ -106,10 +106,17 @@ Authorization: Bearer <same token>
 For solver workflows, the server runtime also needs:
 
 ```bash
-export DAMASK_MCP_WORKSPACES=/writable/path/workspaces
+export DAMASK_MCP_RUNTIME_DIR=/tmp/damask-mcp
+export DAMASK_MCP_WORKSPACES=/tmp/damask-mcp/workspaces
 export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
 ```
 
-Do not point `DAMASK_MCP_WORKSPACES` at `/app/workspaces` unless `/app` is writable in the hosting environment. On many hosted platforms, `/app` is the read-only application directory.
+Do not point `DAMASK_MCP_WORKSPACES` at `/app/workspaces` unless `/app` is writable in the hosting environment. On many hosted platforms, `/app` is the read-only application directory. DAMASK MCP also directs runtime cache, temporary, Matplotlib config, Python pycache, and future database/state directories under `DAMASK_MCP_RUNTIME_DIR`, which defaults to `/tmp/damask-mcp`.
+
+If the platform provides a persistent writable volume such as `/data`, prefer:
+
+```bash
+export DAMASK_MCP_WORKSPACES=/data/workspaces
+```
 
 For local desktop users, run the MCP inside the Conda environment that can import `damask` and see `DAMASK_grid`.

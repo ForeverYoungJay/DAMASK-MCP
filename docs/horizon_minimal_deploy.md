@@ -42,10 +42,13 @@ This repo already has:
 Set these in the hosting provider, not in the connector install form:
 
 ```bash
-DAMASK_MCP_WORKSPACES=/writable/path/workspaces
+DAMASK_MCP_RUNTIME_DIR=/tmp/damask-mcp
+DAMASK_MCP_WORKSPACES=/tmp/damask-mcp/workspaces
 DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
 MCP_BEARER_TOKEN=<optional-shared-token>
 ```
+
+If the platform provides a persistent writable volume such as `/data`, prefer `DAMASK_MCP_WORKSPACES=/data/workspaces`. If it only provides ephemeral writable storage, `/tmp/damask-mcp/workspaces` is the safest default.
 
 After deployment, call `check_damask_installation` and `find_damask_executables` through the MCP client. The runner tools are ready only when `find_damask_executables` reports a `selected` executable.
 

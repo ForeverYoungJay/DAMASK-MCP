@@ -56,7 +56,7 @@ If a client or deployment uses a read-only application directory such as `/app`,
 export DAMASK_MCP_WORKSPACES=/absolute/path/to/DAMASK-MCP/workspaces
 ```
 
-DAMASK MCP does not fall back to `/tmp`. If the workspace root cannot be created, it reports an error and asks for `DAMASK_MCP_WORKSPACES`.
+For local desktop use, prefer an explicit `DAMASK_MCP_WORKSPACES` path so generated files stay easy to inspect. In hosted environments where the current working directory is read-only, DAMASK MCP falls back to the runtime directory, which defaults to `/tmp/damask-mcp/workspaces`.
 
 ## Configure the Solver Path
 

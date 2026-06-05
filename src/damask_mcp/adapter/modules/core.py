@@ -29,18 +29,32 @@ def check_damask_installation() -> dict[str, Any]:
     """Check whether the local DAMASK Python package can be imported."""
     try:
         damask = import_damask()
+        local_source_root = damask_python_root().resolve()
+        module_file = Path(damask.__file__).resolve()
+        try:
+            module_file.relative_to(local_source_root)
+            using_local_source = True
+        except ValueError:
+            using_local_source = False
         return {
             "ok": True,
             "imported": True,
             "version": getattr(damask, "__version__", None),
-            "source_root": str(damask_python_root().resolve()),
-            "module_file": str(Path(damask.__file__).resolve()),
+            "source_root": str(local_source_root),
+            "local_source_root": str(local_source_root),
+            "local_source_exists": local_source_root.exists(),
+            "using_local_source": using_local_source,
+            "import_location": "local_source" if using_local_source else "installed_package",
+            "module_file": str(module_file),
         }
     except Exception as exc:
+        local_source_root = damask_python_root().resolve()
         return {
             "ok": False,
             "imported": False,
-            "source_root": str(damask_python_root().resolve()),
+            "source_root": str(local_source_root),
+            "local_source_root": str(local_source_root),
+            "local_source_exists": local_source_root.exists(),
             "error": f"{type(exc).__name__}: {exc}",
         }
 

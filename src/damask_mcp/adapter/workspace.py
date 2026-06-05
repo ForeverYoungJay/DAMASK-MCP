@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from damask_mcp.runtime import runtime_root
+
 
 def project_root() -> Path:
     """Return the DAMASK MCP project root."""
@@ -17,17 +19,28 @@ def project_root() -> Path:
 def workspaces_root() -> Path:
     """Return the workspace root and create it if needed."""
     configured = os.environ.get("DAMASK_MCP_WORKSPACES")
-    root = Path(configured).expanduser() if configured else Path.cwd() / "workspaces"
+    roots = [Path(configured).expanduser()] if configured else [Path.cwd() / "workspaces", runtime_root() / "workspaces"]
 
-    try:
-        root.mkdir(parents=True, exist_ok=True)
-    except OSError as exc:
-        configured_hint = "the configured DAMASK_MCP_WORKSPACES" if configured else "the current working directory workspaces"
-        raise RuntimeError(
-            f"Could not create {configured_hint}: {root}. "
-            "Set DAMASK_MCP_WORKSPACES to a writable directory shared with the MCP runtime."
-        ) from exc
-    return root
+    errors: list[str] = []
+    for root in roots:
+        try:
+            root.mkdir(parents=True, exist_ok=True)
+            return root
+        except OSError as exc:
+            errors.append(f"{root}: {exc}")
+
+    configured_hint = "the configured DAMASK_MCP_WORKSPACES" if configured else "the current working directory or runtime workspaces"
+    tried = "; ".join(errors)
+    raise RuntimeError(
+        f"Could not create {configured_hint}. Tried: {tried}. "
+        "Set DAMASK_MCP_WORKSPACES to a writable directory shared with the MCP runtime."
+    )
+
+
+def preferred_workspaces_root() -> Path:
+    """Return the preferred workspace path before writability fallback is applied."""
+    configured = os.environ.get("DAMASK_MCP_WORKSPACES")
+    return Path(configured).expanduser() if configured else Path.cwd() / "workspaces"
 
 
 def damask_python_root() -> Path:

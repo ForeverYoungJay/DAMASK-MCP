@@ -79,7 +79,7 @@ fastmcp run fastmcp.json --skip-env
 
 The root-level `fastmcp.json` uses `streamable-http` on `127.0.0.1:8081/mcp`, matching hosted FastMCP proxy runners that wait for a local HTTP MCP endpoint.
 
-By default, generated inputs and outputs are written under `workspaces/` in the MCP process current working directory. In local STDIO installs, this is the "Working directory" field. In hosted runtimes, do not use a read-only application directory such as `/app`; set `DAMASK_MCP_WORKSPACES` to a writable mounted directory. Use an explicit workspace directory when you need both the MCP process and a local shell/container to see the same generated inputs.
+By default, generated inputs and outputs are written under `workspaces/` in the MCP process current working directory. In local STDIO installs, this is the "Working directory" field. In hosted runtimes, if that directory is read-only, DAMASK MCP falls back to `/tmp/damask-mcp/workspaces`. Set `DAMASK_MCP_WORKSPACES` to a writable mounted directory when persistent storage is available.
 
 Runner tools require a `DAMASK_grid` executable in the MCP runtime, not only the `damask` Python package. Put `DAMASK_grid` on `PATH` or set `DAMASK_GRID_EXECUTABLE` to its absolute path. The `find_damask_executables` tool reports every probe it tried, the selected executable, environment hints, and setup guidance; ask users to run it first when solver execution is unavailable.
 
@@ -90,6 +90,13 @@ Recommended runtime environment:
 ```bash
 export DAMASK_MCP_WORKSPACES=/absolute/path/to/DAMASK-MCP/workspaces
 export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
+```
+
+Hosted runtimes that only provide `/tmp` as writable storage can use:
+
+```bash
+export DAMASK_MCP_RUNTIME_DIR=/tmp/damask-mcp
+export DAMASK_MCP_WORKSPACES=/tmp/damask-mcp/workspaces
 ```
 
 ## Client Config Examples
