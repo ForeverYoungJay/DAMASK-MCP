@@ -99,6 +99,38 @@ export DAMASK_MCP_RUNTIME_DIR=/tmp/damask-mcp
 export DAMASK_MCP_WORKSPACES=/tmp/damask-mcp/workspaces
 ```
 
+## Remote Conda Deployment
+
+Yes, this MCP can be deployed inside a Conda environment. The important rule is that the Conda environment must live on the remote server or container that runs the MCP process. A user's local Conda environment is not visible to a remote HTTP MCP deployment.
+
+One typical remote setup is:
+
+```bash
+conda create -n damask-mcp python=3.11
+conda activate damask-mcp
+python -m pip install -e ".[dev]"
+python -c "import damask; print(damask.__version__)"
+which DAMASK_grid || echo "Set DAMASK_GRID_EXECUTABLE"
+```
+
+Then run the STDIO server from that environment:
+
+```bash
+conda run --no-capture-output -n damask-mcp python -m damask_mcp.mcp_servers.damask_server
+```
+
+For an HTTP FastMCP deployment, run the repository entrypoint from the same Conda environment:
+
+```bash
+export DAMASK_MCP_RUNTIME_DIR=/tmp/damask-mcp
+export DAMASK_MCP_WORKSPACES=/tmp/damask-mcp/workspaces
+export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
+export MCP_BEARER_TOKEN=<shared-secret-token>
+conda run --no-capture-output -n damask-mcp fastmcp run fastmcp.json --skip-env
+```
+
+If the platform provides persistent storage, prefer a mounted path such as `/data/workspaces` for `DAMASK_MCP_WORKSPACES`.
+
 ## Client Config Examples
 
 Example client configs are included here:
@@ -164,7 +196,7 @@ server.py:mcp
 - MCP tools return JSON-serializable dictionaries.
 - Material and generic load builders require explicit user-provided model parameters; they do not assume elastic constants, plasticity laws, lattices, or default deformation gradients.
 - Cubic Hooke materials (`cP`, `cI`, `cF`) must provide `C_11`, `C_12`, and `C_44`; `C_11` alone is rejected.
-- File writes are restricted to `workspaces/`.
+- File reads and writes are restricted to `workspaces/`.
 - Runner subprocess calls do not use `shell=True`.
 - Large arrays are summarized instead of returned directly.
 - Result-mutating post-processing tools are restricted to workspace-local files.

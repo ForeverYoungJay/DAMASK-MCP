@@ -33,8 +33,8 @@ def resolve_workspace_dir(name: str) -> Path:
     return workspaces_root() / name
 
 
-def ensure_workspace_write_path(path: str | Path, *, create_parent: bool = True) -> Path:
-    """Resolve a writable path restricted to workspaces/."""
+def _resolve_workspace_path(path: str | Path) -> Path:
+    """Resolve a path using the same workspace-relative semantics for reads and writes."""
     workspace_root = workspaces_root().resolve()
     candidate = Path(path).expanduser()
     if not candidate.is_absolute():
@@ -45,7 +45,16 @@ def ensure_workspace_write_path(path: str | Path, *, create_parent: bool = True)
     else:
         resolved = candidate.resolve()
     if not is_within_directory(resolved, workspace_root):
-        raise ValueError(f"Write path must stay within {workspace_root}.")
+        raise ValueError(f"Path must stay within {workspace_root}.")
+    return resolved
+
+
+def ensure_workspace_write_path(path: str | Path, *, create_parent: bool = True) -> Path:
+    """Resolve a writable path restricted to workspaces/."""
+    try:
+        resolved = _resolve_workspace_path(path)
+    except ValueError as exc:
+        raise ValueError(str(exc).replace("Path must stay within", "Write path must stay within")) from exc
     if create_parent:
         resolved.parent.mkdir(parents=True, exist_ok=True)
     return resolved
@@ -53,16 +62,12 @@ def ensure_workspace_write_path(path: str | Path, *, create_parent: bool = True)
 
 def ensure_path_within_workspaces(path: str | Path) -> Path:
     """Ensure that an existing or future path stays inside workspaces/."""
-    workspace_root = workspaces_root().resolve()
-    resolved = Path(path).expanduser().resolve()
-    if not is_within_directory(resolved, workspace_root):
-        raise ValueError(f"Path must stay within {workspace_root}.")
-    return resolved
+    return _resolve_workspace_path(path)
 
 
 def ensure_existing_path(path: str | Path) -> Path:
-    """Ensure that a path exists."""
-    resolved = Path(path).expanduser().resolve()
+    """Ensure that a workspace-local path exists."""
+    resolved = ensure_path_within_workspaces(path)
     if not resolved.exists():
         raise FileNotFoundError(f"Path does not exist: {resolved}")
     return resolved

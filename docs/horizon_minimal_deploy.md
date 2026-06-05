@@ -31,7 +31,7 @@ This repo already has:
 
 - Confirm whether the hosted runtime will have a working `damask` Python package.
 - Confirm whether the hosted runtime will have access to a `DAMASK_grid` executable if you want runner tools enabled. The remote MCP server cannot use a connector user's local `DAMASK_grid`.
-- Set `DAMASK_MCP_WORKSPACES` to a writable mounted directory if generated inputs must be inspected or reused outside the MCP process.
+- Set `DAMASK_MCP_WORKSPACES` to a writable mounted directory; file reads and writes are restricted to that tree.
 - Set `DAMASK_GRID_EXECUTABLE` to the absolute solver path when `DAMASK_grid` is not discoverable on `PATH`.
 - Set `MCP_BEARER_TOKEN` when the public HTTP endpoint should require `Authorization: Bearer <token>`.
 - Decide whether to expose all tools or trim the public surface later.

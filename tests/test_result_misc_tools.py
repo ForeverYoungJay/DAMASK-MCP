@@ -114,10 +114,13 @@ def test_add_strain(monkeypatch):
 
 
 def test_inspect_dream3d_base_group(monkeypatch, tmp_path):
-    file_path = tmp_path / "file.dream3d"
+    workspace_root = tmp_path / "workspaces"
+    monkeypatch.setenv("DAMASK_MCP_WORKSPACES", str(workspace_root))
+    file_path = workspace_root / "demo" / "file.dream3d"
+    file_path.parent.mkdir(parents=True)
     file_path.write_text("x", encoding="utf-8")
     monkeypatch.setattr(util_tools, "import_damask", lambda: FakeDamask)
-    assert util_tools.inspect_dream3d_base_group(str(file_path))["ok"] is True
+    assert util_tools.inspect_dream3d_base_group("demo/file.dream3d")["ok"] is True
 
 
 def test_grid_ravel(monkeypatch):
@@ -127,7 +130,10 @@ def test_grid_ravel(monkeypatch):
 
 
 def test_inspect_table(monkeypatch, tmp_path):
-    file_path = tmp_path / "table.txt"
+    workspace_root = tmp_path / "workspaces"
+    monkeypatch.setenv("DAMASK_MCP_WORKSPACES", str(workspace_root))
+    file_path = workspace_root / "demo" / "table.txt"
+    file_path.parent.mkdir(parents=True)
     file_path.write_text("1_a\n1\n", encoding="utf-8")
     monkeypatch.setattr(table_tools, "import_damask", lambda: FakeDamask)
-    assert table_tools.inspect_table(str(file_path))["ok"] is True
+    assert table_tools.inspect_table("demo/table.txt")["ok"] is True

@@ -119,4 +119,25 @@ If the platform provides a persistent writable volume such as `/data`, prefer:
 export DAMASK_MCP_WORKSPACES=/data/workspaces
 ```
 
+## Conda on the Remote Host
+
+The MCP can run inside Conda, as long as Conda is installed in the remote runtime and the selected environment contains both the Python dependencies and the DAMASK solver executable. The local user's Conda environment is not visible to a remote HTTP deployment.
+
+```bash
+conda create -n damask-mcp python=3.11
+conda activate damask-mcp
+python -m pip install -e ".[dev]"
+python -c "import damask; print(damask.__version__)"
+which DAMASK_grid || export DAMASK_GRID_EXECUTABLE=/absolute/path/to/DAMASK_grid
+```
+
+For FastMCP HTTP deployment from that environment:
+
+```bash
+export DAMASK_MCP_RUNTIME_DIR=/tmp/damask-mcp
+export DAMASK_MCP_WORKSPACES=/tmp/damask-mcp/workspaces
+export MCP_BEARER_TOKEN=<shared-secret-token>
+conda run --no-capture-output -n damask-mcp fastmcp run fastmcp.json --skip-env
+```
+
 For local desktop users, run the MCP inside the Conda environment that can import `damask` and see `DAMASK_grid`.

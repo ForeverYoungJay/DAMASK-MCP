@@ -19,7 +19,7 @@ Report suspected vulnerabilities privately to the project maintainer or reposito
 
 DAMASK MCP is designed for local or controlled scientific workflows:
 
-- file writes are restricted to `workspaces/`
+- file reads and writes are restricted to `workspaces/`
 - runner subprocess calls avoid `shell=True`
 - result-mutating tools are restricted to workspace-local paths
 - MCP responses summarize large data instead of returning full arrays

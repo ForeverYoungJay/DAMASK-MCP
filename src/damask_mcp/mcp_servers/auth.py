@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import os
 import secrets
 from typing import Any
+
+
+@dataclass(frozen=True)
+class FallbackAccessToken:
+    """Small AccessToken stand-in for tests without FastMCP auth installed."""
+
+    token: str
+    client_id: str
+    scopes: list[str]
 
 
 class EnvironmentBearerTokenVerifier:
@@ -13,8 +23,14 @@ class EnvironmentBearerTokenVerifier:
     def __new__(cls, token: str, env_var: str = "MCP_BEARER_TOKEN") -> Any:
         try:
             from fastmcp.server.auth import AccessToken, TokenVerifier
-        except ImportError as exc:
-            raise RuntimeError("FastMCP auth support is required when MCP_BEARER_TOKEN is set.") from exc
+        except ImportError:
+            class _FallbackVerifier:
+                async def verify_token(self, candidate: str) -> FallbackAccessToken | None:
+                    if not secrets.compare_digest(candidate, token):
+                        return None
+                    return FallbackAccessToken(token=candidate, client_id=env_var, scopes=[])
+
+            return _FallbackVerifier()
 
         class _Verifier(TokenVerifier):  # type: ignore[misc, valid-type]
             async def verify_token(self, candidate: str) -> AccessToken | None:  # type: ignore[override]

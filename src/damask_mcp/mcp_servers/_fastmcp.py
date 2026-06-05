@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Callable
 
 try:
@@ -10,6 +11,12 @@ except ImportError:
     try:
         from mcp.server.fastmcp import FastMCP  # type: ignore[no-redef]
     except ImportError:
+        @dataclass(frozen=True)
+        class _FallbackTool:
+            name: str
+            description: str | None = None
+
+
         class FastMCP:  # type: ignore[no-redef]
             """Minimal fallback used when FastMCP is not installed in the test environment."""
 
@@ -20,10 +27,19 @@ except ImportError:
 
             def tool(self, *args: Any, **kwargs: Any) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
                 def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
-                    self._tools.append(fn)
+                    self.add_tool(fn)
                     return fn
 
                 return decorator
+
+            def add_tool(self, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Callable[..., Any]:
+                del args, kwargs
+                if fn not in self._tools:
+                    self._tools.append(fn)
+                return fn
+
+            async def list_tools(self) -> list[_FallbackTool]:
+                return [_FallbackTool(name=tool.__name__, description=tool.__doc__) for tool in self._tools]
 
             def mount(
                 self,
